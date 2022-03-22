@@ -3,6 +3,7 @@ const { sendOtpOverEmail } = require("../service/email-service");
 const OtpService = require("../service/otp-service");
 const HashService = require("../service/hash-service");
 const PaymentService = require("../service/payment-service");
+const Payment = require("../database/models/payment");
 
 class AuthController {
   async sendOtp(req, res) {
@@ -71,6 +72,13 @@ class AuthController {
         });
       }
 
+      const paymentData = await Payment.findOne({
+        email,
+      });
+      if (!!paymentData)
+        return res.status(400).json({
+          message: "User already registered",
+        });
       const response = await PaymentService.createPaymentOrder(email);
       if (!response.status) {
         res.status(500).json({

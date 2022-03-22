@@ -32,21 +32,6 @@ const PaymentSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    razorpay_payment_id: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    razorpay_signature: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    razorpay_amount: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     attendee_flag: {
       type: Boolean,
       required: true,

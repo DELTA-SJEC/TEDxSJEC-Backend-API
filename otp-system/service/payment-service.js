@@ -1,5 +1,10 @@
 const Razorpay = require("razorpay");
 
+const instance = new Razorpay({
+  key_id: process.env.RZR_KEY_ID,
+  key_secret: process.env.RZR_KEY_SECRET,
+});
+
 class PaymentService {
   async createPaymentOrder(email) {
     let amount = process.env.OTHER_AMOUNT;
@@ -8,10 +13,6 @@ class PaymentService {
       if (checkForEmail.length > 1) amount = process.env.ORG_ST_AMOUNT;
       else amount = process.env.ORG_FT_AMOUNT;
     }
-    const instance = new Razorpay({
-      key_id: process.env.RZR_KEY_ID,
-      key_secret: process.env.RZR_KEY_SECRET,
-    });
     const options = {
       amount: amount,
       currency: "INR",
@@ -27,6 +28,22 @@ class PaymentService {
     return {
       status: true,
       orderId: order.id,
+    };
+  }
+
+  async getOrderPaymentDetails(orderId) {
+    const order = await instance.orders.fetchPayments(orderId);
+
+    const response = order.items.filter((item) => item.status !== "failed");
+    if (!response.length > 0) {
+      return {
+        status: false,
+        message: "Error in fetching order",
+      };
+    }
+    return {
+      status: true,
+      order,
     };
   }
 }

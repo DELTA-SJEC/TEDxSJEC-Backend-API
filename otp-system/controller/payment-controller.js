@@ -1,10 +1,53 @@
 const Payment = require("../database/models/Payment");
-
+const PaymentService = require("../service/payment-service");
+const { ValidatePaymentSuccess } = require("../service/validator");
 class PaymentController {
   async PaymentSuccess(req, res) {
-    res.status(200).json({
-      message: "Payment Success",
-    });
+    try {
+      const { name, email, phone, razorpay_order_id } = req.body;
+      const errors = ValidatePaymentSuccess(
+        name,
+        email,
+        phone,
+        razorpay_order_id
+      );
+      if (errors.length > 0) {
+        return res.status(400).json({ errors });
+      }
+      const response = await PaymentService.getOrderPaymentDetails(
+        razorpay_order_id
+      );
+      if (!response.status) {
+        return res.status(500).json({
+          message: "Error in fetching order",
+        });
+      }
+      if (!response.order.items.length > 0) {
+        return res.status(500).json({
+          message: "Error in fetching order",
+        });
+      }
+      const paymentData = await Payment({
+        name,
+        email,
+        phone,
+        image: "demo",
+        qrcode: "demo",
+        razorpay_order_id,
+        attendee_flag: false,
+        response: response.order,
+      });
+      await paymentData.save();
+      res.status(200).json({
+        message: "Success",
+        paymentData: paymentData,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Error",
+        error: error,
+      });
+    }
   }
 
   async AllPaymentData(req, res) {
