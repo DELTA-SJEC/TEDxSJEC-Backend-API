@@ -17,7 +17,7 @@ router.post("/api/verify-otp", upload.none(), AuthController.verifyOtp);
 // Push Success Payment Data to DB
 router.post(
   "/api/payment-success",
-  upload.single("paymentData"),
+  upload.single("avatar"),
   PaymentController.PaymentSuccess
 );
 

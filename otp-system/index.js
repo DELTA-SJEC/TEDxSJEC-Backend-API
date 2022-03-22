@@ -16,6 +16,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use("/storage", express.static("data"));
 app.use(router);
 
 app.get("/", (req, res) => {
