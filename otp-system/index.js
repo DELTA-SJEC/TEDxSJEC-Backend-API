@@ -1,5 +1,6 @@
-const express = require("express");
 require("dotenv").config();
+require("./database/connect").connect();
+const express = require("express");
 const cors = require("cors");
 
 const router = require("./router/router");
@@ -9,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: process.env.CORS_ORIGIN,
   optionsSuccessStatus: 200,
   credentials: true,
 };
@@ -19,7 +20,8 @@ app.use(router);
 
 app.get("/", (req, res) => {
   res.json({
-    message: "Hello World",
+    message: "TEDx SJEC API",
+    author: "Team Delta SJEC",
   });
 });
 

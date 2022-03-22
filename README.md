@@ -1,2 +1,0 @@
-## Tedx-Payment-Portal
-<hr/>
