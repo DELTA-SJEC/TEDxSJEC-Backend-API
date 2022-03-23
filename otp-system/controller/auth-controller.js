@@ -50,7 +50,7 @@ class AuthController {
 
   async verifyOtp(req, res) {
     try {
-      const { otp, hash, phone } = req.body;
+      const { otp, hash, phone, email } = req.body;
       if (!otp || !hash || !phone) {
         res.status(400).json({
           message: "Missing required fields",

@@ -27,7 +27,7 @@ class PaymentService {
     }
     return {
       status: true,
-      orderId: order.id,
+      orderId: order,
     };
   }
 
