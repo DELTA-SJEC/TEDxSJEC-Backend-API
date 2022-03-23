@@ -1,5 +1,5 @@
 const { validateEmailPhone } = require("../service/validator");
-const { sendOtpOverEmail } = require("../service/email-service");
+const { emailViaAWS_SES } = require("../service/email-service");
 const OtpService = require("../service/otp-service");
 const HashService = require("../service/hash-service");
 const PaymentService = require("../service/payment-service");
@@ -26,8 +26,8 @@ class AuthController {
 
       // send OTP
       try {
-        await OtpService.sendBySms(phone, otp);
-        //await sendOtpOverEmail(email, otp);
+        // await OtpService.sendBySms(phone, otp);
+        await emailViaAWS_SES(email, otp);
         res.json({
           hash: `${hash}.${expires}`,
           phone,
