@@ -35,7 +35,6 @@ class AuthController {
           otp,
         });
       } catch (err) {
-        console.log(err);
         res.status(500).json({
           message: "Error sending OTP",
           error: err,
@@ -52,14 +51,14 @@ class AuthController {
     try {
       const { otp, hash, phone, email } = req.body;
       if (!otp || !hash || !phone) {
-        res.status(400).json({
+        return res.status(400).json({
           message: "Missing required fields",
         });
       }
 
       const [hashedOtp, expires] = hash.split(".");
       if (Date.now() > +expires) {
-        res.status(400).json({
+        return res.status(400).json({
           message: "OTP expired",
         });
       }
@@ -67,7 +66,7 @@ class AuthController {
       const data = `${phone}.${otp}.${expires}`;
       const isValid = OtpService.verifyOtp(hashedOtp, data);
       if (!isValid) {
-        res.status(400).json({
+        return res.status(400).json({
           message: "Invalid OTP",
         });
       }
@@ -81,16 +80,16 @@ class AuthController {
         });
       const response = await PaymentService.createPaymentOrder(email);
       if (!response.status) {
-        res.status(500).json({
+        return res.status(500).json({
           message: "Error creating payment",
         });
       }
-      res.status(200).json({
+      return res.status(200).json({
         message: "OTP verified",
-        response,
+        payment: response,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         message: error.message,
       });
     }
