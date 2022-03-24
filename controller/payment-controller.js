@@ -58,12 +58,12 @@ class PaymentController {
         response: response.order,
       });
       await paymentData.save();
-      res.status(200).json({
+      return res.status(200).json({
         message: "Success",
         paymentData: paymentData,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         message: "Error",
         error: error,
       });
@@ -78,7 +78,7 @@ class PaymentController {
         paymentData: paymentData,
       });
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         message: "Error",
         error: error,
       });
@@ -107,13 +107,13 @@ class PaymentController {
       } else {
         paymentData.attendee_flag = true;
         await paymentData.save();
-        res.status(200).json({
+        return res.status(200).json({
           message: "Success",
           paymentData: paymentData,
         });
       }
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         message: "Error",
         error: error,
       });

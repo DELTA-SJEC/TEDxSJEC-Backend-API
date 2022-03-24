@@ -52,13 +52,13 @@ exports.register = async (req, res) => {
         password: hashedPassword,
       });
       const response = await user.save();
-      res.status(201).json({
+      return res.status(201).json({
         message: "User created successfully",
         user: response,
       });
     }
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       error: error.message,
     });
   }
@@ -112,7 +112,7 @@ exports.login = async (req, res, next) => {
       }
     }
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       error: error.message,
     });
   }

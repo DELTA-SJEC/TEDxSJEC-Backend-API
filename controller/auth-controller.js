@@ -28,20 +28,20 @@ class AuthController {
       try {
         // await OtpService.sendBySms(phone, otp);
         await emailViaAWS_SES(email, otp);
-        res.json({
+        return res.status(200).json({
           hash: `${hash}.${expires}`,
           phone,
           // TODO: comment this line in prod
           otp,
         });
       } catch (err) {
-        res.status(500).json({
+        return res.status(500).json({
           message: "Error sending OTP",
           error: err,
         });
       }
     } catch (error) {
-      res.status(500).json({
+      return res.status(500).json({
         message: error.message,
       });
     }
