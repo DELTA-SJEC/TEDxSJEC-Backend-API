@@ -3,7 +3,7 @@ const { emailViaAWS_SES } = require("../service/email-service");
 const OtpService = require("../service/otp-service");
 const HashService = require("../service/hash-service");
 const PaymentService = require("../service/payment-service");
-const Payment = require("../database/models/payment");
+const Payment = require("../database/models/Payment");
 
 class AuthController {
   async sendOtp(req, res) {
