@@ -1,9 +1,10 @@
-FROM node:alpine
+FROM node:14
 
 WORKDIR /var/mynode
 
+COPY package.json ./
 
-COPY ./package.json ./
+COPY yarn.lock ./
 
 RUN yarn install
 
