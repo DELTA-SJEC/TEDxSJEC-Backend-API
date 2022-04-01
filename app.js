@@ -2,10 +2,18 @@ require("dotenv").config();
 require("./database/connect").connect();
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
+const morgan = require("morgan");
+const path = require("path");
 
 const router = require("./router/router");
 
 const PORT = process.env.PORT || 8080;
+
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "./log/access-logs/access.log"),
+  { flags: "a" }
+);
 
 const app = express();
 
@@ -16,12 +24,13 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(morgan("combined", { stream: accessLogStream }));
 app.use("/storage", express.static("data"));
 app.use(router);
 
 app.get("/", (req, res) => {
   res.json({
-    message: "TEDx SJEC API",
+    message: "TEDxSJEC Payment API",
     author: "Team Delta SJEC",
   });
 });

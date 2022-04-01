@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const multer = require("multer");
+const path = require("path");
 const AuthController = require("../controller/auth-controller");
 const PaymentController = require("../controller/payment-controller");
 const {
@@ -36,5 +37,15 @@ router.post(
 );
 
 router.get("/api/payment/all", auth, PaymentController.AllPaymentData);
+
+// Dashboard Access Logs
+router.get("/api/server/log/access", auth, (req, res) => {
+  res
+    .status(200)
+    .sendFile(path.join(__dirname, "../log/access-logs/access.log"));
+});
+
+// Dashboard Error Logs
+//TODO:
 
 module.exports = router;
