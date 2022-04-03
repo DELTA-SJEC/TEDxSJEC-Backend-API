@@ -42,12 +42,44 @@ router.get("/api/payment/all", auth, PaymentController.AllPaymentData);
 
 // Dashboard Access Logs
 router.get("/api/server/log/access", auth, (req, res) => {
-  res
-    .status(200)
-    .sendFile(path.join(__dirname, "../log/access-logs/access.log"));
+  try {
+    return res
+      .status(200)
+      .sendFile(path.join(__dirname, "../log/access-logs/access.log"));
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error",
+      error: error,
+    });
+  }
 });
 
 // Dashboard Error Logs
 //TODO:
+router.get("/api/server/log/error", auth, (req, res) => {
+  try {
+    return res
+      .status(200)
+      .sendFile(path.join(__dirname, "../log/request-logs/error.log"));
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error",
+      error: error,
+    });
+  }
+});
+
+router.get("/api/server/log/info", auth, (req, res) => {
+  try {
+    return res
+      .status(200)
+      .sendFile(path.join(__dirname, "../log/request-logs/info.log"));
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error",
+      error: error,
+    });
+  }
+});
 
 module.exports = router;

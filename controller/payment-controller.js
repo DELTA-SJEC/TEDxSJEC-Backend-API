@@ -2,6 +2,10 @@ const Payment = require("../database/models/Payment");
 const PaymentService = require("../service/payment-service");
 const ImageService = require("../service/image-service");
 const { ValidatePaymentSuccess } = require("../service/validator");
+const { customLogger } = require("../service/error-log-service");
+
+const FileName = "payment-controller";
+
 class PaymentController {
   async PaymentSuccess(req, res) {
     try {
@@ -87,10 +91,12 @@ class PaymentController {
 
   async Ticket(req, res) {
     const { id } = req.query;
-    if (!id)
+    if (!id) {
+      customLogger.error(`${FileName} Ticket: Bad Request`);
       return res.status(400).json({
         message: "Bad Request",
       });
+    }
     const paymentData = await Payment.findOne({
       razorpay_order_id: id,
     });
