@@ -85,6 +85,30 @@ class PaymentController {
     }
   }
 
+  async Ticket(req, res) {
+    const { id } = req.query;
+    if (!id)
+      return res.status(400).json({
+        message: "Bad Request",
+      });
+    const paymentData = await Payment.findOne({
+      razorpay_order_id: id,
+    });
+    if (!paymentData)
+      return res.status(404).json({
+        message: "Ticket Data Not Found",
+      });
+    return res.status(200).json({
+      message: "Success",
+      name: paymentData.name,
+      email: paymentData.email,
+      phone: paymentData.phone,
+      image: paymentData.image,
+      qrcode: paymentData.qrcode,
+      razorpay_order_id: paymentData.razorpay_order_id,
+    });
+  }
+
   async FlagChange(req, res) {
     try {
       const { id } = req.query;

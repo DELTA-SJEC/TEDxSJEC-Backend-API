@@ -28,13 +28,15 @@ router.post("/api/register", upload.none(), register);
 router.get("/api/current/user", auth, currentUser);
 router.post("/api/login", upload.none(), login);
 
-// Dashboard Data & App Flag Trigger
+// Dashboard Data & App Flag Trigger Also Ticket Part
 router.post(
   "/api/payment/flag",
   auth,
   upload.none(),
   PaymentController.FlagChange
 );
+
+router.post("/api/ticket", upload.none(), PaymentController.Ticket);
 
 router.get("/api/payment/all", auth, PaymentController.AllPaymentData);
 
