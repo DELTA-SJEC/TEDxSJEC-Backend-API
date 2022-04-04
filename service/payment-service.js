@@ -1,10 +1,5 @@
 const Razorpay = require("razorpay");
 
-const instance = new Razorpay({
-  key_id: process.env.RZR_KEY_ID,
-  key_secret: process.env.RZR_KEY_SECRET,
-});
-
 class PaymentService {
   async createPaymentOrder(email) {
     let amount = process.env.OTHER_AMOUNT;
@@ -18,6 +13,10 @@ class PaymentService {
       currency: "INR",
       payment_capture: "1",
     };
+    const instance = new Razorpay({
+      key_id: process.env.RZR_KEY_ID,
+      key_secret: process.env.RZR_KEY_SECRET,
+    });
     const order = await instance.orders.create(options);
     if (!order) {
       return {
@@ -32,6 +31,10 @@ class PaymentService {
   }
 
   async getOrderPaymentDetails(orderId) {
+    const instance = new Razorpay({
+      key_id: process.env.RZR_KEY_ID,
+      key_secret: process.env.RZR_KEY_SECRET,
+    });
     const order = await instance.orders.fetchPayments(orderId);
 
     const response = order.items.filter((item) => item.status !== "failed");
