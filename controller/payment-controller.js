@@ -74,6 +74,8 @@ class PaymentController {
         razorpay_order_id,
         attendee_flag: false,
         response: response.order,
+        razorpay_payment_id,
+        razorpay_signature,
       });
       await paymentData.save();
       return res.status(200).json({
