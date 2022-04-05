@@ -19,7 +19,14 @@ exports.validateEmailPhone = (email, phone) => {
   return errors;
 };
 
-exports.ValidatePaymentSuccess = (name, email, phone, razorpay_order_id) => {
+exports.ValidatePaymentSuccess = (
+  name,
+  email,
+  phone,
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature
+) => {
   let errors = [];
   switch (true) {
     case !name:
@@ -39,6 +46,12 @@ exports.ValidatePaymentSuccess = (name, email, phone, razorpay_order_id) => {
       break;
     case !razorpay_order_id:
       errors.push("Razorpay order id is required");
+      break;
+    case !razorpay_payment_id:
+      errors.push("Razorpay payment id is required");
+      break;
+    case !razorpay_signature:
+      errors.push("Razorpay signature is required");
       break;
   }
   return errors;

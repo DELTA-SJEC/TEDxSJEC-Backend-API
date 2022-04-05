@@ -1,4 +1,5 @@
 const Razorpay = require("razorpay");
+const crypto = require("crypto");
 
 class PaymentService {
   async createPaymentOrder(email) {
@@ -48,6 +49,18 @@ class PaymentService {
       status: true,
       order,
     };
+  }
+
+  async verifyPaymentSignature(
+    razorpay_payment_id,
+    razorpay_order_id,
+    razorpay_signature
+  ) {
+    const hmac = crypto.createHmac("sha256", process.env.RZR_KEY_SECRET);
+
+    hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+    const generatedSignature = hmac.digest("hex");
+    return generatedSignature === razorpay_signature;
   }
 }
 

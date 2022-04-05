@@ -9,7 +9,14 @@ const FileName = "payment-controller";
 class PaymentController {
   async PaymentSuccess(req, res) {
     try {
-      const { name, email, phone, razorpay_order_id } = req.body;
+      const {
+        name,
+        email,
+        phone,
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+      } = req.body;
       const avatar = req.file.buffer;
       if (!avatar)
         return res.status(400).json({
@@ -31,7 +38,9 @@ class PaymentController {
         name,
         email,
         phone,
-        razorpay_order_id
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature
       );
       if (errors.length > 0) {
         return res.status(400).json({ errors });
@@ -39,7 +48,12 @@ class PaymentController {
       const response = await PaymentService.getOrderPaymentDetails(
         razorpay_order_id
       );
-      if (!response.status) {
+      const signatureVerified = await PaymentService.verifyPaymentSignature(
+        razorpay_payment_id,
+        razorpay_order_id,
+        razorpay_signature
+      );
+      if (!response.status || !signatureVerified) {
         return res.status(500).json({
           message: "Error in fetching order",
         });
