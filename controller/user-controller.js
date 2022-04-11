@@ -90,14 +90,15 @@ exports.login = async (req, res, next) => {
         error: "Please provide a valid email",
       });
     } else if (password.length < 6) {
-      return res.status(422).send({
+      return res.status(422).json({
         error: "Password must be at least 6 characters long",
       });
     } else {
       const userCheck = await User.findOne({ email: email });
-      if (!userCheck) res.status(422).send({ error: "User does not exist" });
-      var check = bcrypt.compareSync(password, userCheck.password);
-      if (!check) res.status(422).send({ error: "Wrong password" });
+      if (!userCheck)
+        return res.status(422).json({ error: "User does not exist" });
+      const check = bcrypt.compareSync(password, userCheck.password);
+      if (!check) return res.status(422).json({ error: "Wrong password" });
       if (!!check) {
         const token = jwt.sign(
           {
