@@ -24,15 +24,13 @@ class AuthController {
       const data = `${phone}.${otp}.${expires}`;
       const hash = HashService.hashOtp(data);
 
-      // send OTP
+      // Send OTP
       try {
         // await OtpService.sendBySms(phone, otp);
         await emailViaAWS_SES(email, otp);
         return res.status(200).json({
           hash: `${hash}.${expires}`,
           phone,
-          // TODO: comment this line in prod
-          otp,
         });
       } catch (err) {
         return res.status(500).json({

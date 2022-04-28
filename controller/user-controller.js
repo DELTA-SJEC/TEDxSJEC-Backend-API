@@ -1,25 +1,25 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../database/models/User");
-const History = require("../database/models/History");
+// const History = require("../database/models/History");
 const validator = require("validator");
-const DeviceDetector = require("device-detector-js");
+// const DeviceDetector = require("device-detector-js");
 const saltRounds = 10;
 
-const sessionHistory = async (req, res, next) => {
-  try {
-    const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-    const device = new DeviceDetector();
-    const deviceInfo = device.parse(req.headers["user-agent"]);
-    const history = new History({ ip: ip, device: deviceInfo });
-    await history.save();
-    next();
-  } catch (error) {
-    return res.status(500).json({
-      error: error.message,
-    });
-  }
-};
+// const sessionHistory = async (req, res, next) => {
+//   try {
+//     const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+//     const device = new DeviceDetector();
+//     const deviceInfo = device.parse(req.headers["user-agent"]);
+//     const history = new History({ ip: ip, device: deviceInfo });
+//     await history.save();
+//     next();
+//   } catch (error) {
+//     return res.status(500).json({
+//       error: error.message,
+//     });
+//   }
+// };
 
 exports.register = async (req, res) => {
   try {
@@ -77,8 +77,8 @@ exports.currentUser = async (req, res) => {
   }
 };
 
-exports.login = async (req, res, next) => {
-  sessionHistory(req, res, next);
+exports.login = async (req, res) => {
+  // sessionHistory(req, res, next);
   try {
     const { email, password } = req.body;
     if (!email || !password) {
