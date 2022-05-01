@@ -5,6 +5,7 @@ const cors = require("cors");
 const fs = require("fs");
 const morgan = require("morgan");
 const path = require("path");
+const favicon = require("serve-favicon");
 
 const router = require("./router/router");
 
@@ -22,7 +23,7 @@ const corsOptions = {
   optionsSuccessStatus: 200,
   credentials: true,
 };
-
+app.use(favicon(path.join(__dirname, "data", "favicon.png")));
 app.use(cors(corsOptions));
 app.use(morgan("combined", { stream: accessLogStream }));
 app.use("/storage", express.static("data"));

@@ -1,14 +1,10 @@
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
+const { calculateTicketCost } = require("./ticket-cost-service");
 
 class PaymentService {
   async createPaymentOrder(email) {
-    let amount = process.env.OTHER_AMOUNT;
-    if (email.includes(process.env.ORG_DOMAIN)) {
-      let checkForEmail = email.split("@")[0].split(".");
-      if (checkForEmail.length > 1) amount = process.env.ORG_ST_AMOUNT;
-      else amount = process.env.ORG_FT_AMOUNT;
-    }
+    const amount = await calculateTicketCost(email);
     const options = {
       amount: amount,
       currency: "INR",
