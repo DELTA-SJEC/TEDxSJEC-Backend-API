@@ -7,9 +7,9 @@ const {
   currentUser,
   login,
 } = require("../controller/user-controller");
-const upload = require("../service/multer-image-service");
+const multer = require("multer");
 const auth = require("../service/verify-jwt-token");
-
+const upload = multer();
 // OTP Generate/Verify & Generate Order Part
 router.post("/api/send-otp", upload.none(), AuthController.sendOtp);
 router.post("/api/verify-otp", upload.none(), AuthController.verifyOtp);
