@@ -65,7 +65,7 @@ class PaymentController {
         });
       }
       await ImageService.generateQR(razorpay_order_id);
-      await ImageService.generateUserImage(avatar, razorpay_order_id);
+      const image_url = await ImageService.generateUserImage(req.file);
       await emailViaAWS_SES_Success(
         email,
         razorpay_payment_id,
@@ -75,7 +75,7 @@ class PaymentController {
         name,
         email,
         phone,
-        image: `/storage/image/${razorpay_order_id}.png`,
+        image: image_url,
         qrcode: `/storage/qr/${razorpay_order_id}.png`,
         razorpay_order_id,
         attendee_flag: false,

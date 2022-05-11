@@ -11,6 +11,7 @@
     "aws-sdk": "^2.1098.0",
     "bcrypt": "^5.0.1",
     "cjs-loader": "^0.1.0",
+    "cloudinary": "^1.29.1",
     "cors": "^2.8.5",
     "device-detector-js": "^3.0.2",
     "dotenv": "^16.0.0",
