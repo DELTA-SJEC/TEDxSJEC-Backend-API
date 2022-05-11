@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const multer = require("multer");
 const path = require("path");
 const AuthController = require("../controller/auth-controller");
 const PaymentController = require("../controller/payment-controller");
@@ -8,7 +7,7 @@ const {
   currentUser,
   login,
 } = require("../controller/user-controller");
-const upload = multer();
+const upload = require("../service/multer-image-service");
 const auth = require("../service/verify-jwt-token");
 
 // OTP Generate/Verify & Generate Order Part
