@@ -6,6 +6,7 @@ const ImageService = require("../service/image-service");
 const { ValidatePaymentSuccess } = require("../service/validator");
 const { customLogger } = require("../service/error-log-service");
 const { emailViaAWS_SES_Success } = require("../service/email-service-sucess");
+const { uploadFile } = require("../service/s3-service");
 const unlinkFile = util.promisify(fs.unlink);
 const FileName = "payment-controller";
 
@@ -20,8 +21,7 @@ class PaymentController {
         razorpay_payment_id,
         razorpay_signature,
       } = req.body;
-      const avatar = req.file.buffer;
-      if (!avatar)
+      if (!req.file)
         return res.status(400).json({
           message: "Bad Request, No Image Found",
         });
