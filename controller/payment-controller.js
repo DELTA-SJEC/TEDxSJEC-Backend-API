@@ -1,10 +1,12 @@
+const fs = require("fs");
+const util = require("util");
 const Payment = require("../database/models/Payment");
 const PaymentService = require("../service/payment-service");
 const ImageService = require("../service/image-service");
 const { ValidatePaymentSuccess } = require("../service/validator");
 const { customLogger } = require("../service/error-log-service");
 const { emailViaAWS_SES_Success } = require("../service/email-service-sucess");
-
+const unlinkFile = util.promisify(fs.unlink);
 const FileName = "payment-controller";
 
 class PaymentController {
@@ -64,18 +66,21 @@ class PaymentController {
           message: "Error in fetching order",
         });
       }
+      const file = req.file;
+      const result = await uploadFile(file);
+      await unlinkFile(file.path);
       await ImageService.generateQR(razorpay_order_id);
-      await ImageService.generateUserImage(avatar, razorpay_order_id);
+      // await ImageService.generateUserImage(avatar, razorpay_order_id);
       await emailViaAWS_SES_Success(
         email,
         razorpay_payment_id,
-        `${process.env.CORS_ORIGIN}/ticket/${razorpay_order_id}`
+        `${process.env.CLIENT_ORIGIN}/ticket/${razorpay_order_id}`
       );
       const paymentData = await Payment({
         name,
         email,
         phone,
-        image: `/storage/image/${razorpay_order_id}.png`,
+        image: `/images/${result.Key}`,
         qrcode: `/storage/qr/${razorpay_order_id}.png`,
         razorpay_order_id,
         attendee_flag: false,

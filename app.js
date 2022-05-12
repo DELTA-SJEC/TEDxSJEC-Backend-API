@@ -19,10 +19,11 @@ const accessLogStream = fs.createWriteStream(
 const app = express();
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN,
-  optionsSuccessStatus: 200,
-  credentials: true,
+  origin: process.env.CLIENT_URLS.split(","),
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
 };
+
 app.use(favicon(path.join(__dirname, "data", "favicon.png")));
 app.use(cors(corsOptions));
 app.use(morgan("combined", { stream: accessLogStream }));

@@ -9,7 +9,9 @@ const {
 } = require("../controller/user-controller");
 const multer = require("multer");
 const auth = require("../service/verify-jwt-token");
-const upload = multer();
+const { getFileStream } = require("../service/s3-service");
+const upload = multer({ dest: "uploads/" });
+
 // OTP Generate/Verify & Generate Order Part
 router.post("/api/send-otp", upload.none(), AuthController.sendOtp);
 router.post("/api/verify-otp", upload.none(), AuthController.verifyOtp);
@@ -79,6 +81,13 @@ router.get("/api/server/log/info", auth, (req, res) => {
       error: error,
     });
   }
+});
+
+router.get("/images/:key", (req, res) => {
+  console.log(req.params);
+  const key = req.params.key;
+  const readStream = getFileStream(key);
+  readStream.pipe(res);
 });
 
 module.exports = router;
