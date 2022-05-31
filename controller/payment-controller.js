@@ -2,7 +2,7 @@ const fs = require("fs");
 const util = require("util");
 const Payment = require("../database/models/Payment");
 const PaymentService = require("../service/payment-service");
-const ImageService = require("../service/image-service");
+// const ImageService = require("../service/image-service");
 const { ValidatePaymentSuccess } = require("../service/validator");
 const { customLogger } = require("../service/error-log-service");
 const { emailViaAWS_SES_Success } = require("../service/email-service-sucess");
@@ -11,6 +11,74 @@ const unlinkFile = util.promisify(fs.unlink);
 const FileName = "payment-controller";
 
 class PaymentController {
+  async PaymentSuccessNonReflect(req, res) {
+    try {
+      const { name, email, phone, razorpay_payment_id } = req.body;
+      if (!req.file)
+        return res.status(400).json({
+          message: "Bad Request, No Image Found",
+        });
+      const mimetype = req.file.mimetype;
+      if (
+        !(
+          mimetype === "image/png" ||
+          mimetype === "image/jpeg" ||
+          mimetype === "image/jpg"
+        )
+      )
+        return res.status(400).json({
+          message: "Bad Request, Only PNG, JPG and JPEG Allowed",
+        });
+      const razorpay_order_id =
+        await PaymentService.getOrder_Id_From_Payment_Id(razorpay_payment_id);
+      const response = await PaymentService.getOrderPaymentDetails(
+        razorpay_order_id
+      );
+      if (!response.status) {
+        return res.status(500).json({
+          message: "Error in fetching order",
+        });
+      }
+      if (!response.order.items.length > 0) {
+        return res.status(500).json({
+          message: "Error in fetching order",
+        });
+      }
+      const file = req.file;
+      const result = await uploadFile(file);
+      await unlinkFile(file.path);
+      // await ImageService.generateQR(razorpay_order_id);
+      // await ImageService.generateUserImage(avatar, razorpay_order_id);
+      await emailViaAWS_SES_Success(
+        email,
+        razorpay_payment_id,
+        `${process.env.CLIENT_ORIGIN}/ticket/${razorpay_order_id}`
+      );
+      const paymentData = await Payment({
+        name,
+        email,
+        phone,
+        image: `/images/${result.Key}`,
+        qrcode: `/storage/qr/${razorpay_order_id}.png`,
+        razorpay_order_id,
+        attendee_flag: false,
+        response: response.order,
+        razorpay_payment_id,
+        razorpay_signature: "NA",
+      });
+      await paymentData.save();
+      return res.status(200).json({
+        message: "Success",
+        paymentData: paymentData,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: "Error",
+        error: error,
+      });
+    }
+  }
+
   async PaymentSuccess(req, res) {
     try {
       const {
@@ -51,12 +119,12 @@ class PaymentController {
       const response = await PaymentService.getOrderPaymentDetails(
         razorpay_order_id
       );
-      const signatureVerified = await PaymentService.verifyPaymentSignature(
-        razorpay_payment_id,
-        razorpay_order_id,
-        razorpay_signature
-      );
-      if (!response.status || !signatureVerified) {
+      // const signatureVerified = await PaymentService.verifyPaymentSignature(
+      //   razorpay_payment_id,
+      //   razorpay_order_id,
+      //   razorpay_signature
+      // );
+      if (!response.status) {
         return res.status(500).json({
           message: "Error in fetching order",
         });
@@ -69,7 +137,7 @@ class PaymentController {
       const file = req.file;
       const result = await uploadFile(file);
       await unlinkFile(file.path);
-      await ImageService.generateQR(razorpay_order_id);
+      // await ImageService.generateQR(razorpay_order_id);
       // await ImageService.generateUserImage(avatar, razorpay_order_id);
       await emailViaAWS_SES_Success(
         email,

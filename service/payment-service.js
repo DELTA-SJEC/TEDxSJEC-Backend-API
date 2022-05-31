@@ -27,6 +27,15 @@ class PaymentService {
     };
   }
 
+  async getOrder_Id_From_Payment_Id(razorpay_payment_id) {
+    const instance = new Razorpay({
+      key_id: process.env.RZR_KEY_ID,
+      key_secret: process.env.RZR_KEY_SECRET,
+    });
+    const payment = await instance.payments.fetch(razorpay_payment_id);
+    return payment.order_id;
+  }
+
   async getOrderPaymentDetails(orderId) {
     const instance = new Razorpay({
       key_id: process.env.RZR_KEY_ID,

@@ -23,6 +23,13 @@ router.post(
   PaymentController.PaymentSuccess
 );
 
+router.post(
+  "/api/payment-success-v2-for-not-reflected",
+  upload.single("avatar"),
+  auth,
+  PaymentController.PaymentSuccessNonReflect
+);
+
 // Admin Login & Register Part
 // TODO: Disable Register Part For Prod
 router.post("/api/register", upload.none(), register);
