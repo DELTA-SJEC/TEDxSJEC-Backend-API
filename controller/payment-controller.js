@@ -11,6 +11,102 @@ const unlinkFile = util.promisify(fs.unlink);
 const FileName = "payment-controller";
 
 class PaymentController {
+  async FreeTicket(req, res) {
+    try {
+      const { name, email, phone, company } = req.body;
+      if (!req.file)
+        return res.status(400).json({
+          message: "Bad Request, No Image Found",
+        });
+      const mimetype = req.file.mimetype;
+      if (
+        !(
+          mimetype === "image/png" ||
+          mimetype === "image/jpeg" ||
+          mimetype === "image/jpg"
+        )
+      )
+        return res.status(400).json({
+          message: "Bad Request, Only PNG, JPG and JPEG Allowed",
+        });
+      const file = req.file;
+      const result = await uploadFile(file);
+      await unlinkFile(file.path);
+      const ticketID = `${company
+        .split(" ")
+        .join("-")
+        .toLowerCase()}-${Date.now()}`;
+      await emailViaAWS_SES_Success(
+        email,
+        ticketID,
+        `${process.env.CLIENT_ORIGIN}/ticket/${ticketID}`
+      );
+      const paymentDataResponse = {
+        entity: "collection",
+        count: 2,
+        items: [
+          {
+            id: company,
+            entity: "payment",
+            amount: 0,
+            currency: "INR",
+            status: "captured",
+            order_id: ticketID,
+            invoice_id: null,
+            international: false,
+            method: "Sponsor Payment",
+            amount_refunded: 0,
+            refund_status: null,
+            captured: true,
+            description: "TEDxSJEC 2022",
+            card_id: null,
+            bank: null,
+            wallet: null,
+            vpa: ticketID,
+            email: email,
+            contact: phone,
+            notes: {
+              address: "TEDxSJEC 2022",
+            },
+            fee: "NA",
+            tax: "NA",
+            error_code: null,
+            error_description: null,
+            error_source: null,
+            error_step: null,
+            error_reason: null,
+            acquirer_data: {
+              rrn: "NA",
+            },
+            created_at: Math.round(Date.now() / 1000),
+          },
+        ],
+      };
+      const paymentData = await Payment({
+        name,
+        email,
+        phone,
+        image: `/images/${result.Key}`,
+        qrcode: `/storage/qr/${ticketID}.png`,
+        razorpay_order_id: ticketID,
+        attendee_flag: false,
+        response: paymentDataResponse,
+        razorpay_payment_id: company,
+        razorpay_signature: "NA",
+      });
+      await paymentData.save();
+      return res.status(200).json({
+        message: "Success",
+        paymentData: paymentData,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: "Error",
+        error: error,
+      });
+    }
+  }
+
   async PaymentSuccessNonReflect(req, res) {
     try {
       const { name, email, phone, razorpay_payment_id } = req.body;
