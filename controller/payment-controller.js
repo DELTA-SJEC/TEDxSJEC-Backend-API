@@ -18,6 +18,14 @@ class PaymentController {
         return res.status(400).json({
           message: "Bad Request, No Image Found",
         });
+      // check if email exist in db
+      const checkForEmail = await Payment.findOne({
+        email: email,
+      });
+      if (!!checkForEmail)
+        return res.status(400).json({
+          message: "Email Already Exist",
+        });
       const mimetype = req.file.mimetype;
       if (
         !(
@@ -114,6 +122,14 @@ class PaymentController {
         return res.status(400).json({
           message: "Bad Request, No Image Found",
         });
+      // check if email exist in db
+      const checkForEmail = await Payment.findOne({
+        email: email,
+      });
+      if (!!checkForEmail)
+        return res.status(400).json({
+          message: "Email Already Exist",
+        });
       const mimetype = req.file.mimetype;
       if (
         !(
@@ -127,6 +143,10 @@ class PaymentController {
         });
       const razorpay_order_id =
         await PaymentService.getOrder_Id_From_Payment_Id(razorpay_payment_id);
+      if (!razorpay_order_id)
+        return res.status(404).json({
+          message: "Order Data Not Found",
+        });
       const response = await PaymentService.getOrderPaymentDetails(
         razorpay_order_id
       );
