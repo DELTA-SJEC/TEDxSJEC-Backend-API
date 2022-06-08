@@ -26,12 +26,14 @@ router.post(
 router.post(
   "/api/payment-success-v2-for-not-reflected",
   upload.single("avatar"),
+  auth,
   PaymentController.PaymentSuccessNonReflect
 );
 
 router.post(
   "/api/free-ticket",
   upload.single("avatar"),
+  auth,
   PaymentController.FreeTicket
 );
 
