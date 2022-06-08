@@ -14,7 +14,7 @@ class PaymentController {
   async FreeTicket(req, res) {
     try {
       const { name, email, phone, company } = req.body;
-      if (!req.file)
+      if (!req.file || !name || !email || !phone || !company)
         return res.status(400).json({
           message: "Bad Request, No Image Found",
         });
@@ -110,7 +110,7 @@ class PaymentController {
   async PaymentSuccessNonReflect(req, res) {
     try {
       const { name, email, phone, razorpay_payment_id } = req.body;
-      if (!req.file)
+      if (!req.file || !name || !email || !phone || !razorpay_payment_id)
         return res.status(400).json({
           message: "Bad Request, No Image Found",
         });
